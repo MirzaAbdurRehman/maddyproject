@@ -40,6 +40,9 @@ class _ClothingFetchScreenState extends State<ClothingFetchScreen>
           onPressed: () => Navigator.pop(context),
         ),
         bottom: TabBar(
+          labelColor: Colors.orange,
+          unselectedLabelColor: Colors.white,
+          indicatorColor: Colors.orange,
           controller: _tabController,
           tabs: const [
             Tab(text: 'Clothing Products'),
@@ -86,7 +89,7 @@ class _ClothingFetchScreenState extends State<ClothingFetchScreen>
                   crossAxisCount: screenWidth > 600 ? 3 : 2,
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
-                  childAspectRatio: 0.65, // Taller cards
+                  childAspectRatio: 0.65,
                 ),
                 itemBuilder: (context, index) {
                   var doc = snapshot.data!.docs[index];
@@ -128,7 +131,6 @@ class _ClothingFetchScreenState extends State<ClothingFetchScreen>
                           ),
                           const SizedBox(height: 4),
                           Text(
-
                             'Rs: $productPrice',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -170,6 +172,7 @@ class _ClothingFetchScreenState extends State<ClothingFetchScreen>
                                           productDescription1: productDescription,
                                           img1: productImage,
                                           id1: data_id,
+                                          collectionName: collectionName, // ✅ Added here
                                         ),
                                       ),
                                     );

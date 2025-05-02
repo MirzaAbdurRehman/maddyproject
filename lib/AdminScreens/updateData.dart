@@ -13,6 +13,7 @@ class UpdateClothing extends StatefulWidget {
   final String productInfo1;
   final String productDescription1;
   final String img1;
+  final String collectionName; // ✅ added
 
   UpdateClothing({
     required this.id1,
@@ -21,6 +22,7 @@ class UpdateClothing extends StatefulWidget {
     required this.productInfo1,
     required this.productDescription1,
     required this.img1,
+    required this.collectionName, // ✅ added
   });
 
   @override
@@ -90,7 +92,7 @@ class _UpdateClothingState extends State<UpdateClothing> {
     };
 
     await FirebaseFirestore.instance
-        .collection('ClothingData')
+        .collection(widget.collectionName) // ✅ Dynamic collection
         .doc(widget.id1)
         .update(updatedData);
   }
@@ -212,13 +214,22 @@ class _UpdateClothingState extends State<UpdateClothing> {
                   ),
                 ),
                 SizedBox(height: 20),
-                buildTextField(controller: productNameController, label: 'Product Name'),
+                buildTextField(
+                    controller: productNameController,
+                    label: 'Product Name'),
                 SizedBox(height: 15),
-                buildTextField(controller: productPriceController, label: 'Product Price', inputType: TextInputType.number),
+                buildTextField(
+                    controller: productPriceController,
+                    label: 'Product Price',
+                    inputType: TextInputType.number),
                 SizedBox(height: 15),
-                buildTextField(controller: productInfoController, label: 'Product Information', inputType: TextInputType.text),
+                buildTextField(
+                    controller: productInfoController,
+                    label: 'Product Information'),
                 SizedBox(height: 15),
-                buildTextField(controller: productDescriptionController, label: 'Product Description', inputType: TextInputType.text),
+                buildTextField(
+                    controller: productDescriptionController,
+                    label: 'Product Description'),
                 SizedBox(height: 25),
                 SizedBox(
                   width: double.infinity,
@@ -229,7 +240,8 @@ class _UpdateClothingState extends State<UpdateClothing> {
                         updateImageAndData();
                       }
                     },
-                    child: Text('Update', style: TextStyle(fontSize: 20)),
+                    child:
+                    Text('Update', style: TextStyle(fontSize: 20)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
                       shape: RoundedRectangleBorder(
