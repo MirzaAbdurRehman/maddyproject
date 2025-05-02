@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "706675914030",
+    "project_id": "citiguid-8c345",
+    "storage_bucket": "citiguid-8c345.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:706675914030:android:00838dfcdf361f47dd76bf",
+        "android_client_info": {
+          "package_name": "com.example.city_guide"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9UeqhWeIc-yEsSQ2qY64L9LbbHLvMTw8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
