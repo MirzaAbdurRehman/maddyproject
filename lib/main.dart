@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'AdminScreens/Fetch_Data_Screen.dart';
 import 'Screens/Splash.dart';
 
 void main() async {
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
       ),
-      home: SplashScreen(),
+      home: ClothingFetchScreen(),
     );
   }
 }
