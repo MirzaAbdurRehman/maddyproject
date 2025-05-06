@@ -1,8 +1,15 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:clothing/AdminScreens/product_Detail.dart';
 import 'package:clothing/AdminScreens/updateData.dart';
+import 'package:clothing/Screens/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../Screens/own_services.dart';
 
 class ClothingFetchScreen extends StatefulWidget {
   const ClothingFetchScreen({super.key});
@@ -17,17 +24,49 @@ class _ClothingFetchScreenState extends State<ClothingFetchScreen>
   String selectedFilter = 'None';
   String searchQuery = '';
 
+
+  String user_id = '';
+
+
+  Future getUser() async {
+    //   Using Shared Prefrenes
+    SharedPreferences userCredential = await SharedPreferences.getInstance();
+    var Uemail = userCredential.getString('email');
+    debugPrint('user Email: $Uemail');
+    return Uemail;
+  }
+
+  @override
+  void initState() {
+
+    getUser().then((value) {
+      setState(() {
+        user_id = value;
+      });
+      // print('${user_id}');
+    });
+
+    _tabController = TabController(length: 3, vsync: this);
+
+    AnalyticsEvents.logScreenView(screenName: 'HomeScreen', ScreenIndex: '1');
+    super.initState();
+  }
+
   final List<String> filterOptions = [
     'None',
     'Price: Low to High',
     'Price: High to Low',
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-  }
+  final List<String> images = [
+    'https://images.pexels.com/photos/70497/pexels-photo-70497.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    'https://images.pexels.com/photos/936611/pexels-photo-936611.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    'https://images.pexels.com/photos/1410235/pexels-photo-1410235.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    'https://images.pexels.com/photos/936611/pexels-photo-936611.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    'https://images.pexels.com/photos/936611/pexels-photo-936611.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'
+  ];
+
+
 
   @override
   void dispose() {
@@ -40,15 +79,132 @@ class _ClothingFetchScreenState extends State<ClothingFetchScreen>
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
+
+      drawer: Drawer(
+        child: Container(
+          color: Colors.black, // Set the drawer background to black
+          child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('usersinfo')
+                .where("email", isEqualTo: user_id)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (ConnectionState.waiting == snapshot.connectionState) {
+                return Center(child: CircularProgressIndicator());
+              }
+              if (snapshot.hasError) {
+                return Center(child: Text('Error', style: TextStyle(color: Colors.white)));
+              }
+              if (snapshot.hasData) {
+                return ListView.builder(
+                  itemCount: snapshot.data!.docs.length,
+                  itemBuilder: (context, index) {
+                    var Name = snapshot.data!.docs[index]['name'];
+                    var Address = snapshot.data!.docs[index]['address'];
+                    var Phone = snapshot.data!.docs[index]['phone'];
+                    String pImage = snapshot.data!.docs[index]['image'];
+                    var data_id = snapshot.data!.docs[index].id;
+
+                    return Column(
+                      children: [
+                        // Container(
+                        //   width: double.infinity,
+                        //   height: 80,
+                        //   child: const DrawerHeader(
+                        //     decoration: BoxDecoration(color: Colors.black),
+                        //     child: Text(
+                        //       ' Profile',
+                        //       style: TextStyle(color: Colors.white, fontSize: 30),
+                        //     ),
+                        //   ),
+                        // ),
+                        SizedBox(height: 30),
+                        ClipOval(
+                          child: CachedNetworkImage(
+                            imageUrl: pImage,
+                            width: 140,
+                            height: 140,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => CircularProgressIndicator(),
+                            errorWidget: (context, url, error) => Icon(Icons.error),
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        ListTile(
+                          leading: Icon(Icons.person, color: Colors.blue),
+                          title: Text(Name, style: TextStyle(color: Colors.white)),
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                        SizedBox(height: 20),
+                        ListTile(
+                          leading: Icon(Icons.delivery_dining_outlined, color: Colors.red[500]),
+                          title: Text(Address, style: TextStyle(color: Colors.white)),
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                        SizedBox(height: 20),
+                        ListTile(
+                          leading: Icon(Icons.phone, color: Colors.green),
+                          title: Text(Phone, style: TextStyle(color: Colors.white)),
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                        SizedBox(height: 20),
+                        Container(
+                          height: 34,
+                          margin: EdgeInsets.symmetric(horizontal: 36, vertical: 40),
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            child: Text(
+                              "Logout",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontFamily: 'Metropolis'),
+                            ),
+                            onPressed: () {
+                              FirebaseAuth.instance.signOut();
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => LoginScreen()),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red[500],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Text('Update User Profile', style: TextStyle(color: Colors.white)),
+                      ],
+                    );
+                  },
+                );
+              }
+              return Center(
+                child: Text('There is no Data Found', style: TextStyle(color: Colors.white)),
+              );
+            },
+          ),
+        ),
+      ),
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
+
+        iconTheme: IconThemeData(color: Colors.white),
         title: const Text('All Products', style: TextStyle(color: Colors.white)),
         centerTitle: true,
         backgroundColor: Colors.black,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
+        // leading: IconButton(
+        //   icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+        //   onPressed: () => Navigator.pop(context),
+        // ),
         bottom: TabBar(
           labelColor: Colors.orange,
           unselectedLabelColor: Colors.white,
@@ -61,7 +217,22 @@ class _ClothingFetchScreenState extends State<ClothingFetchScreen>
           ],
         ),
       ),
-      body: Column(
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          _buildScrollableTabContent('ClothingData', screenWidth),
+          _buildScrollableTabContent('ElectronicsData', screenWidth),
+          _buildScrollableTabContent('ShoesData', screenWidth),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildScrollableTabContent(String collectionName, double screenWidth) {
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 8),
 
@@ -75,7 +246,7 @@ class _ClothingFetchScreenState extends State<ClothingFetchScreen>
                 });
               },
               onTapOutside: (event) {
-                FocusScope.of(context).unfocus(); // Keyboard close
+                FocusScope.of(context).unfocus();
               },
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -97,13 +268,11 @@ class _ClothingFetchScreenState extends State<ClothingFetchScreen>
             ),
           ),
 
-
           const SizedBox(height: 6),
 
-
-          // 🔽 Sorting Dropdown
+          // 🔽 Compact Sorting Dropdown
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 4),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -111,15 +280,15 @@ class _ClothingFetchScreenState extends State<ClothingFetchScreen>
                   child: DropdownButtonFormField<String>(
                     value: selectedFilter,
                     decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4), // Reduced vertical padding
                       filled: true,
                       fillColor: Colors.white,
                       labelText: "Sort by",
-                      labelStyle: const TextStyle(fontSize: 14),
-                      prefixIcon: const Icon(Icons.sort, size: 18, color: Colors.grey),
+                      labelStyle: const TextStyle(fontSize: 12), // Smaller label
+                      prefixIcon: const Icon(Icons.sort, size: 16, color: Colors.grey), // Smaller icon
                       isDense: true,
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25),
+                        borderRadius: BorderRadius.circular(25), // Smaller radius
                         borderSide: const BorderSide(color: Colors.black),
                       ),
                       enabledBorder: OutlineInputBorder(
@@ -131,13 +300,13 @@ class _ClothingFetchScreenState extends State<ClothingFetchScreen>
                         borderSide: const BorderSide(color: Colors.black),
                       ),
                     ),
-                    style: const TextStyle(fontSize: 14, color: Colors.black),
+                    style: const TextStyle(fontSize: 12, color: Colors.black), // Smaller text
                     dropdownColor: Colors.white,
-                    icon: const Icon(Icons.arrow_drop_down, color: Colors.grey),
+                    icon: const Icon(Icons.arrow_drop_down, color: Colors.grey, size: 20), // Smaller dropdown icon
                     items: filterOptions.map((filter) {
                       return DropdownMenuItem<String>(
                         value: filter,
-                        child: Text(filter, style: const TextStyle(fontSize: 14)),
+                        child: Text(filter, style: const TextStyle(fontSize: 12)), // Smaller dropdown text
                       );
                     }).toList(),
                     onChanged: (value) {
@@ -151,26 +320,37 @@ class _ClothingFetchScreenState extends State<ClothingFetchScreen>
             ),
           ),
 
-          // 📦 Product List (Grid)
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                _buildProductList('ClothingData', screenWidth),
-                _buildProductList('ElectronicsData', screenWidth),
-                _buildProductList('ShoesData', screenWidth),
-              ],
+          const SizedBox(height: 10),
+          // 🖼️ Carousel Slider
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: CarouselSlider(
+              items: images.map((imageUrl) {
+                return ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Image.network(
+                    imageUrl,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                  ),
+                );
+              }).toList(),
+              options: CarouselOptions(
+                height: MediaQuery.of(context).size.height * 0.2,
+                autoPlay: true,
+                enlargeCenterPage: true,
+                aspectRatio: 16 / 9,
+                autoPlayCurve: Curves.easeInOut,
+                enableInfiniteScroll: true,
+                autoPlayAnimationDuration: const Duration(seconds: 1),
+                viewportFraction: 0.8,
+              ),
             ),
           ),
-        ],
-      ),
-    );
-  }
 
-  Widget _buildProductList(String collectionName, double screenWidth) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
+          const SizedBox(height: 8),
+
+          // 📦 Product List
           StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance.collection(collectionName).snapshots(),
             builder: (context, snapshot) {
@@ -189,7 +369,6 @@ class _ClothingFetchScreenState extends State<ClothingFetchScreen>
 
               List<DocumentSnapshot> products = snapshot.data!.docs;
 
-              // 🔍 Filter by search
               if (searchQuery.isNotEmpty) {
                 products = products.where((doc) {
                   final productName = doc['productName'].toString().toLowerCase();
@@ -197,7 +376,6 @@ class _ClothingFetchScreenState extends State<ClothingFetchScreen>
                 }).toList();
               }
 
-              // 🔃 Sort by price
               if (selectedFilter == 'Price: Low to High') {
                 products.sort((a, b) => int.parse(a['productPrice'].toString())
                     .compareTo(int.parse(b['productPrice'].toString())));
@@ -215,8 +393,7 @@ class _ClothingFetchScreenState extends State<ClothingFetchScreen>
                   crossAxisCount: screenWidth > 600 ? 3 : 2,
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
-                  childAspectRatio: MediaQuery.of(context).size.width /
-                      (MediaQuery.of(context).size.height * 0.75), // 👈 Responsive aspect ratio
+                  childAspectRatio: screenWidth / (MediaQuery.of(context).size.height * 0.75),
                 ),
                 itemBuilder: (context, index) {
                   var doc = products[index];
@@ -228,17 +405,20 @@ class _ClothingFetchScreenState extends State<ClothingFetchScreen>
                   var data_id = doc.id;
 
                   return GestureDetector(
-                    onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) =>
-                      CategoriesDetailedPage(
-                        pid: data_id,
-                        productName1: productName,
-                        productPrice1: productPrice,
-                        productImage1: productImage,
-                        productInfo1: productInfo,
-                        productDescription1: productDescription,
-                      ),
-                      ));
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CategoriesDetailedPage(
+                            pid: data_id,
+                            productName1: productName,
+                            productPrice1: productPrice,
+                            productImage1: productImage,
+                            productInfo1: productInfo,
+                            productDescription1: productDescription,
+                          ),
+                        ),
+                      );
                     },
                     child: Card(
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -281,18 +461,14 @@ class _ClothingFetchScreenState extends State<ClothingFetchScreen>
                               'Info: $productInfo',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: screenWidth > 600 ? 14 : 12,
-                              ),
+                              style: TextStyle(fontSize: screenWidth > 600 ? 14 : 12),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               'Description: $productDescription',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: screenWidth > 600 ? 14 : 12,
-                              ),
+                              style: TextStyle(fontSize: screenWidth > 600 ? 14 : 12),
                             ),
                             RatingBar.builder(
                               initialRating: 3,
@@ -301,9 +477,8 @@ class _ClothingFetchScreenState extends State<ClothingFetchScreen>
                               direction: Axis.horizontal,
                               allowHalfRating: true,
                               itemCount: 5,
-                              itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                              itemBuilder: (context, _) => Icon(
-
+                              itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                              itemBuilder: (context, _) => const Icon(
                                 Icons.star,
                                 color: Colors.amber,
                               ),
@@ -317,7 +492,6 @@ class _ClothingFetchScreenState extends State<ClothingFetchScreen>
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-
                                   IconButton(
                                     onPressed: () {
                                       Navigator.push(
@@ -351,7 +525,7 @@ class _ClothingFetchScreenState extends State<ClothingFetchScreen>
                                   ),
                                 ],
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ),

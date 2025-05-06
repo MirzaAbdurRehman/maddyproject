@@ -44,6 +44,7 @@ dependencies:
   cached_network_image:
   shared_preferences:
   firebase_analytics:
+  achievement_view:
   firebase_storage:
   image_picker:
   flutter_rating_bar:

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:clothing/AdminScreens/Fetch_Data_Screen.dart';
 import 'package:clothing/Screens/login.dart';
 import 'package:clothing/home.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
       if(value != null){
          // Mean  3_Second
          Timer(const Duration(milliseconds: 2000), (){
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => home() ));
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ClothingFetchScreen() ));
          })
       }else{
          // Mean  3_Second
