@@ -257,7 +257,8 @@ class _creaDataAdminState extends State<creaDataAdmin> {
                 padding: const EdgeInsets.symmetric(horizontal: 30.0),
                 child: ElevatedButton(
                   onPressed: () async {
-                    await productImage(); // Handles upload + Firestore
+                    await productImage();
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ClothingFetchScreen()));
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,

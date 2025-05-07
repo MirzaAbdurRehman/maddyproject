@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:clothing/AdminScreens/createData.dart';
 import 'package:clothing/AdminScreens/product_Detail.dart';
 import 'package:clothing/AdminScreens/updateData.dart';
 import 'package:clothing/AdminScreens/update_profile.dart';
@@ -16,13 +15,13 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../Screens/own_services.dart';
 
-class ClothingFetchScreen extends StatefulWidget {
-  const ClothingFetchScreen({super.key});
+class UserFetchScreen extends StatefulWidget {
+  const UserFetchScreen({super.key});
   @override
-  State<ClothingFetchScreen> createState() => _ClothingFetchScreenState();
+  State<UserFetchScreen> createState() => _UserFetchScreenState();
 }
 
-class _ClothingFetchScreenState extends State<ClothingFetchScreen>
+class _UserFetchScreenState extends State<UserFetchScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
@@ -85,8 +84,146 @@ class _ClothingFetchScreenState extends State<ClothingFetchScreen>
 
     return Scaffold(
 
+
+      drawer: Drawer(
+        child: Container(
+          color: Colors.black, // Set the drawer background to black
+          child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('usersinfo')
+                .where("email", isEqualTo: user_id)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (ConnectionState.waiting == snapshot.connectionState) {
+                return Center(child: CircularProgressIndicator());
+              }
+              if (snapshot.hasError) {
+                return Center(child: Text('Error', style: TextStyle(color: Colors.white)));
+              }
+              if (snapshot.hasData) {
+                return ListView.builder(
+                  itemCount: snapshot.data!.docs.length,
+                  itemBuilder: (context, index) {
+                    var Name = snapshot.data!.docs[index]['name'];
+                    var Address = snapshot.data!.docs[index]['address'];
+                    var Phone = snapshot.data!.docs[index]['phone'];
+                    String pImage = snapshot.data!.docs[index]['image'];
+                    var data_id = snapshot.data!.docs[index].id;
+
+                    return Column(
+                      children: [
+                        // Container(
+                        //   width: double.infinity,
+                        //   height: 80,
+                        //   child: const DrawerHeader(
+                        //     decoration: BoxDecoration(color: Colors.black),
+                        //     child: Text(
+                        //       ' Profile',
+                        //       style: TextStyle(color: Colors.white, fontSize: 30),
+                        //     ),
+                        //   ),
+                        // ),
+                        SizedBox(height: 30),
+                        ClipOval(
+                          child: CachedNetworkImage(
+                            imageUrl: pImage,
+                            width: 140,
+                            height: 140,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => CircularProgressIndicator(),
+                            errorWidget: (context, url, error) => Icon(Icons.error),
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        ListTile(
+                          leading: Icon(Icons.person, color: Colors.blue),
+                          title: Text(Name, style: TextStyle(color: Colors.white)),
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                        SizedBox(height: 20),
+                        ListTile(
+                          leading: Icon(Icons.delivery_dining_outlined, color: Colors.red[500]),
+                          title: Text(Address, style: TextStyle(color: Colors.white)),
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                        SizedBox(height: 20),
+                        ListTile(
+                          leading: Icon(Icons.phone, color: Colors.green),
+                          title: Text(Phone, style: TextStyle(color: Colors.white)),
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                        SizedBox(height: 20),
+                        Container(
+                          height: 34,
+                          margin: EdgeInsets.symmetric(horizontal: 36, vertical: 40),
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            child: Text(
+                              "Logout",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontFamily: 'Metropolis'),
+                            ),
+                            onPressed: () {
+                              FirebaseAuth.instance.signOut();
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => LoginScreen()),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red[500],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: IconButton(
+                              onPressed: (){
+                                WhatsappService.openWhatsappForMessage('923072318609', 'Hi, is anyone available to assist me? I need help resolving a query.');
+                              }, icon: FaIcon(
+                            FontAwesomeIcons.whatsapp,
+                            color: Colors.green,
+                            size: 28,
+                          )
+                          ),
+                        ),
+                        TextButton(
+                            onPressed: (){
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => update_current_User(
+                                id1: data_id,
+                                name1: Name,
+                                address1: Address,
+                                phone_number1: Phone,
+                                img1: pImage,
+                              )));
+                            },
+                            child: Text('Update User Profile', style: TextStyle(color: Colors.white))),
+                      ],
+                    );
+                  },
+                );
+              }
+              return Center(
+                child: Text('There is no Data Found', style: TextStyle(color: Colors.white)),
+              );
+            },
+          ),
+        ),
+      ),
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
+
 
         iconTheme: IconThemeData(color: Colors.white),
         title: const Text('All Products', style: TextStyle(color: Colors.white)),
@@ -95,13 +232,16 @@ class _ClothingFetchScreenState extends State<ClothingFetchScreen>
         actions: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: ElevatedButton(
+            child: IconButton(
                 onPressed: (){
-                 Navigator.push(context, MaterialPageRoute(builder: (context) => creaDataAdmin()));
-                },
-              child: Text('Add Data'),
+                  WhatsappService.openWhatsappForMessage('923072318609', 'Hi, is anyone available to assist me? I need help resolving a query.');
+                }, icon: FaIcon(
+              FontAwesomeIcons.whatsapp,
+              color: Colors.green,
+              size: 28,
             )
             ),
+          ),
         ],
 
         bottom: TabBar(

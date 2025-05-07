@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:clothing/AdminScreens/Fetch_Data_Screen.dart';
+import 'package:clothing/AdminScreens/UserFecthScreen.dart';
 import 'package:clothing/Screens/login.dart';
 import 'package:clothing/home.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
       if(value != null){
          // Mean  3_Second
          Timer(const Duration(milliseconds: 2000), (){
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ClothingFetchScreen() ));
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => UserFetchScreen() ));
          })
       }else{
          // Mean  3_Second
@@ -51,7 +52,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue,
+      backgroundColor: Colors.black54,
       body: SafeArea(
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
@@ -59,23 +60,28 @@ class _SplashScreenState extends State<SplashScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                // color: Colors.purple,
-                   height: MediaQuery.of(context).size.height * 0.99,
-                    width: MediaQuery.of(context).size.width * 0.99,
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Lottie.asset(
-                          'assets/animations/shopping.json',
-                          repeat: true,
-                          reverse: true
-                        ),
-                        Text('E-Commerce',style: TextStyle(color: Colors.white,fontSize: 30,fontWeight: FontWeight.bold),)
-                      ],
-                    ),
+              SizedBox(
+                height: MediaQuery.of(context).size.width * 0.4,
+              ),
+              Center(
+                child: Container(
+                  // color: Colors.purple,
+                     height: MediaQuery.of(context).size.height * 0.99,
+                      width: MediaQuery.of(context).size.width * 0.99,
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Lottie.asset(
+                            'assets/animations/shopping.json',
+                            repeat: true,
+                            reverse: true
+                          ),
+                          Text('E-Commerce',style: TextStyle(color: Colors.white,fontSize: 30,fontWeight: FontWeight.bold),)
+                        ],
+                      ),
+                ),
               ),
             ],
           ),

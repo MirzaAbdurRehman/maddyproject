@@ -1,4 +1,5 @@
 import 'package:achievement_view/achievement_view.dart';
+import 'package:clothing/AdminScreens/UserFecthScreen.dart';
 import 'package:clothing/Screens/Signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const creaDataAdmin()),
+        MaterialPageRoute(builder: (context) => const ClothingFetchScreen()),
       );
     } else {
       try {
@@ -57,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const ClothingFetchScreen()),
+          MaterialPageRoute(builder: (context) => const UserFetchScreen()),
         );
       } on FirebaseAuthException catch (e) {
         AchievementView(
