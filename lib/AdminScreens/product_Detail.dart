@@ -1,7 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+import '../cartProviderModel/GlobalCart.dart';
 
 class CategoriesDetailedPage extends StatefulWidget {
   final String pid;
@@ -45,23 +48,63 @@ class _CategoriesDetailedPageState extends State<CategoriesDetailedPage> {
   }
 
   void AddtoCart() async {
-    Map<String, dynamic> data = {
-      'pid': widget.pid.toString(),
-      'userID': user_id,
-      'count': 1,
-      'total_price': double.parse(widget.productPrice1) * 1,
-      'productName': widget.productName1,
-      'productPrice': widget.productPrice1,
-      'productImage': widget.productImage1,
-    };
-    FirebaseFirestore.instance.collection('AddtoCartData').add(data);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Item successfully added to cart!'),
-        backgroundColor: Colors.green[600],
-      ),
-    );
+    final globalCart = Provider.of<GlobalCartProvider>(context, listen: false);
+    final productPrice = double.parse(widget.productPrice1);
+
+    // Check if product already exists for this user
+    QuerySnapshot existing = await FirebaseFirestore.instance
+        .collection('AddtoCartData')
+        .where('userID', isEqualTo: user_id)
+        .where('pid', isEqualTo: widget.pid)
+        .get();
+
+    if (existing.docs.isNotEmpty) {
+      // Update quantity and total price
+      DocumentSnapshot doc = existing.docs.first;
+      int currentCount = doc['count'];
+      double currentTotal = double.parse(doc['total_price'].toString());
+
+      await FirebaseFirestore.instance
+          .collection('AddtoCartData')
+          .doc(doc.id)
+          .update({
+        'count': currentCount + 1,
+        'total_price': currentTotal + productPrice,
+      });
+
+      globalCart.increaseCount(productPrice);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Item quantity updated in cart.'),
+          backgroundColor: Colors.blue[600],
+        ),
+      );
+    } else {
+      // Add new item to cart
+      Map<String, dynamic> data = {
+        'pid': widget.pid,
+        'userID': user_id,
+        'count': 1,
+        'total_price': productPrice,
+        'productName': widget.productName1,
+        'productPrice': widget.productPrice1,
+        'productImage': widget.productImage1,
+      };
+
+      await FirebaseFirestore.instance.collection('AddtoCartData').add(data);
+      globalCart.increaseCount(productPrice);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Item successfully added to cart!'),
+          backgroundColor: Colors.green[600],
+        ),
+      );
+    }
   }
+
+
 
   @override
   void initState() {
@@ -89,6 +132,7 @@ class _CategoriesDetailedPageState extends State<CategoriesDetailedPage> {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
+
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
@@ -143,7 +187,7 @@ class _CategoriesDetailedPageState extends State<CategoriesDetailedPage> {
                 SizedBox(height: 8),
                 TextFormField(
                   controller: reviewController,
-                  maxLines: 3,
+                  maxLines: 1,
                   decoration: InputDecoration(
                     hintText: "Write your review...",
                     filled: true,

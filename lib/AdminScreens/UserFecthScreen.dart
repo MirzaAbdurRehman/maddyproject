@@ -5,15 +5,19 @@ import 'package:clothing/AdminScreens/updateData.dart';
 import 'package:clothing/AdminScreens/update_profile.dart';
 import 'package:clothing/Screens/login.dart';
 import 'package:clothing/Services/whatsapp_service.dart';
+import 'package:clothing/cartProviderModel/GlobalCart.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../AddToCartScreen/AddCartData.dart';
 import '../Screens/own_services.dart';
+import '../cartProviderModel/cartQuantity.dart';
 
 class UserFetchScreen extends StatefulWidget {
   const UserFetchScreen({super.key});
@@ -71,6 +75,14 @@ class _UserFetchScreenState extends State<UserFetchScreen>
   ];
 
 
+
+  var doc;
+  var productName;
+  var productPrice ;
+  var productInfo  ;
+  var productDescription ;
+  var productImage ;
+  var data_id;
 
   @override
   void dispose() {
@@ -226,7 +238,7 @@ class _UserFetchScreenState extends State<UserFetchScreen>
 
 
         iconTheme: IconThemeData(color: Colors.white),
-        title: const Text('All Products', style: TextStyle(color: Colors.white)),
+        title: const Text('Home', style: TextStyle(color: Colors.white)),
         centerTitle: true,
         backgroundColor: Colors.black,
         actions: [
@@ -242,7 +254,50 @@ class _UserFetchScreenState extends State<UserFetchScreen>
             )
             ),
           ),
-        ],
+    Padding(
+    padding: const EdgeInsets.only(right: 22.0),
+    child: InkWell(
+    onTap: () {
+    Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => AddtoCart()),
+    );
+    },
+    child: Stack(
+    children: [
+    Icon(
+    Icons.shopping_basket_outlined,
+    color: Colors.pink,
+    size: 30,
+    ),
+    Positioned(
+    left: 16,
+    bottom: 15,
+    child: Consumer<GlobalCartProvider>(
+    builder: (context, cartProvider, child) {
+    return Container(
+    padding: const EdgeInsets.all(2), // Reduced padding
+    decoration: BoxDecoration(
+    color: Colors.red,
+    shape: BoxShape.circle,
+    ),
+    constraints: BoxConstraints(minWidth: 16, minHeight: 18), // Smaller size
+    child: Center(
+    child: Text(
+    '${cartProvider.totalCount}',
+    style: TextStyle(color: Colors.white, fontSize: 10), // Smaller font
+    ),
+    ),
+    );
+    },
+    ),
+    )
+    ],
+    ),
+    ),
+    ),
+
+    ],
 
         bottom: TabBar(
           labelColor: Colors.orange,
@@ -435,13 +490,13 @@ class _UserFetchScreenState extends State<UserFetchScreen>
                   childAspectRatio: screenWidth / (MediaQuery.of(context).size.height * 0.75),
                 ),
                 itemBuilder: (context, index) {
-                  var doc = products[index];
-                  var productName = doc['productName'];
-                  var productPrice = doc['productPrice'];
-                  var productInfo = doc['productInfo'];
-                  var productDescription = doc['productDescription'];
-                  var productImage = doc['image'];
-                  var data_id = doc.id;
+                   doc = products[index];
+                   productName = doc['productName'];
+                   productPrice = doc['productPrice'];
+                   productInfo = doc['productInfo'];
+                   productDescription = doc['productDescription'];
+                   productImage = doc['image'];
+                   data_id = doc.id;
 
                   return GestureDetector(
                     onTap: () {
@@ -460,8 +515,10 @@ class _UserFetchScreenState extends State<UserFetchScreen>
                       );
                     },
                     child: Card(
+                      color: Colors.white,
+
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      elevation: 4,
+                      elevation: 0,
                       child: Padding(
                         padding: const EdgeInsets.all(8),
                         child: Column(
@@ -526,45 +583,66 @@ class _UserFetchScreenState extends State<UserFetchScreen>
                               },
                             ),
                             const SizedBox(height: 8),
-                            Align(
-                              alignment: Alignment.bottomRight,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  IconButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => UpdateClothing(
-                                            productName1: productName,
-                                            productPrice1: productPrice,
-                                            productInfo1: productInfo,
-                                            productDescription1: productDescription,
-                                            img1: productImage,
-                                            id1: data_id,
-                                            collectionName: collectionName,
-                                          ),
+                            ElevatedButton(
+                                onPressed: (){
+                                  void AddtoCart() async {
+                                    final globalCart = Provider.of<GlobalCartProvider>(context, listen: false);
+                                    final productPrice = double.parse(productPrice);
+
+                                    // Check if product already exists for this user
+                                    QuerySnapshot existing = await FirebaseFirestore.instance
+                                        .collection('AddtoCartData')
+                                        .where('userID', isEqualTo: user_id)
+                                        .where('pid', isEqualTo: )
+                                        .get();
+
+                                    if (existing.docs.isNotEmpty) {
+                                      // Update quantity and total price
+                                      DocumentSnapshot doc = existing.docs.first;
+                                      int currentCount = doc['count'];
+                                      double currentTotal = double.parse(doc['total_price'].toString());
+
+                                      await FirebaseFirestore.instance
+                                          .collection('AddtoCartData')
+                                          .doc(doc.id)
+                                          .update({
+                                        'count': currentCount + 1,
+                                        'total_price': currentTotal + productPrice,
+                                      });
+
+                                      globalCart.increaseCount(productPrice);
+
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text('Item quantity updated in cart.'),
+                                          backgroundColor: Colors.blue[600],
                                         ),
                                       );
-                                    },
-                                    icon: const Icon(Icons.edit, color: Colors.blue, size: 20),
-                                  ),
-                                  IconButton(
-                                    onPressed: () {
-                                      FirebaseFirestore.instance
-                                          .collection(collectionName)
-                                          .doc(data_id)
-                                          .delete();
+                                    } else {
+                                      // Add new item to cart
+                                      Map<String, dynamic> data = {
+                                        'pid': widget.pid,
+                                        'userID': user_id,
+                                        'count': 1,
+                                        'total_price': productPrice,
+                                        'productName': widget.productName1,
+                                        'productPrice': widget.productPrice1,
+                                        'productImage': widget.,
+                                      };
+
+                                      await FirebaseFirestore.instance.collection('AddtoCartData').add(data);
+                                      globalCart.increaseCount(productPrice);
+
                                       ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(content: Text("Deleted Successfully")),
+                                        SnackBar(
+                                          content: Text('Item successfully added to cart!'),
+                                          backgroundColor: Colors.green[600],
+                                        ),
                                       );
-                                    },
-                                    icon: const Icon(Icons.delete, color: Colors.red, size: 20),
-                                  ),
-                                ],
-                              ),
-                            ),
+                                    }
+                                  }
+                                },
+                                child: Text('Add To Cart'))
                           ],
                         ),
                       ),

@@ -321,7 +321,7 @@ class _ClothingFetchScreenState extends State<ClothingFetchScreen>
                     },
                     child: Card(
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      elevation: 4,
+                      elevation: 0,
                       child: Padding(
                         padding: const EdgeInsets.all(8),
                         child: Column(

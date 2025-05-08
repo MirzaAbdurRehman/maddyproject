@@ -45,6 +45,7 @@ dependencies:
   lottie:
   cached_network_image:
   shared_preferences:
+  provider:
   firebase_analytics:
   achievement_view:
   firebase_storage:
