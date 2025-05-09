@@ -105,7 +105,6 @@ class _CategoriesDetailedPageState extends State<CategoriesDetailedPage> {
   }
 
 
-
   @override
   void initState() {
     getUserEmail().then((value) {

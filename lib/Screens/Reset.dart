@@ -67,12 +67,13 @@ class _ResetScreenState extends State<ResetScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
        appBar: AppBar(
+         iconTheme: IconThemeData(color: Colors.white),
         title: const Text(
-          'Reset Screen',
+          'Forget Password Screen',
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.black,
       ),
        body: Center(
         child: SingleChildScrollView(
@@ -150,7 +151,7 @@ class _ResetScreenState extends State<ResetScreen> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                      backgroundColor: Colors.black,
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25.0),
@@ -158,11 +159,11 @@ class _ResetScreenState extends State<ResetScreen> {
                     ),
                     child: const Center(
                       child: Text(
-                        'Reset',
+                        'Forget Password',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          color: Colors.white,
                         ),
                       ),
                     ),

@@ -1,8 +1,12 @@
+import 'dart:io';
+import 'dart:math';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:clothing/AdminScreens/product_Detail.dart';
 import 'package:clothing/AdminScreens/updateData.dart';
 import 'package:clothing/AdminScreens/update_profile.dart';
+import 'package:clothing/Screens/Reset.dart';
 import 'package:clothing/Screens/login.dart';
 import 'package:clothing/Services/whatsapp_service.dart';
 import 'package:clothing/cartProviderModel/GlobalCart.dart';
@@ -16,6 +20,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../AddToCartScreen/AddCartData.dart';
+import '../Screens/faqs.dart';
 import '../Screens/own_services.dart';
 import '../cartProviderModel/cartQuantity.dart';
 
@@ -78,7 +83,7 @@ class _UserFetchScreenState extends State<UserFetchScreen>
 
   var doc;
   var productName;
-  var productPrice ;
+  var productPrice1 ;
   var productInfo  ;
   var productDescription ;
   var productImage ;
@@ -162,6 +167,23 @@ class _UserFetchScreenState extends State<UserFetchScreen>
                             Navigator.pop(context);
                           },
                         ),
+
+                        ListTile(
+                          leading: Icon(Icons.password, color: Colors.orange),
+                          title: Text('Forget Password', style: TextStyle(color: Colors.white)),
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) =>  ResetScreen()));
+                          },
+                        ),
+
+                        ListTile(
+                          leading: Icon(Icons.receipt_long_outlined, color: Colors.red),
+                          title: Text('FAQS', style: TextStyle(color: Colors.white)),
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) =>  FaqsScreen()));
+                          },
+                        ),
+
                         SizedBox(height: 20),
                         ListTile(
                           leading: Icon(Icons.phone, color: Colors.green),
@@ -490,13 +512,14 @@ class _UserFetchScreenState extends State<UserFetchScreen>
                   childAspectRatio: screenWidth / (MediaQuery.of(context).size.height * 0.75),
                 ),
                 itemBuilder: (context, index) {
-                   doc = products[index];
-                   productName = doc['productName'];
-                   productPrice = doc['productPrice'];
-                   productInfo = doc['productInfo'];
-                   productDescription = doc['productDescription'];
-                   productImage = doc['image'];
-                   data_id = doc.id;
+                  // ✅ Define all variables locally inside itemBuilder
+                  final doc = products[index];
+                  final String productName = doc['productName'];
+                  final String productPrice1 = doc['productPrice'];
+                  final String productInfo = doc['productInfo'];
+                  final String productDescription = doc['productDescription'];
+                  final String productImage = doc['image'];
+                  final String data_id = doc.id;
 
                   return GestureDetector(
                     onTap: () {
@@ -506,7 +529,7 @@ class _UserFetchScreenState extends State<UserFetchScreen>
                           builder: (context) => CategoriesDetailedPage(
                             pid: data_id,
                             productName1: productName,
-                            productPrice1: productPrice,
+                            productPrice1: productPrice1,
                             productImage1: productImage,
                             productInfo1: productInfo,
                             productDescription1: productDescription,
@@ -547,7 +570,7 @@ class _UserFetchScreenState extends State<UserFetchScreen>
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Rs: $productPrice',
+                              'Rs: $productPrice1',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(color: Colors.redAccent),
@@ -583,66 +606,66 @@ class _UserFetchScreenState extends State<UserFetchScreen>
                               },
                             ),
                             const SizedBox(height: 8),
-                            ElevatedButton(
-                                onPressed: (){
-                                  void AddtoCart() async {
-                                    final globalCart = Provider.of<GlobalCartProvider>(context, listen: false);
-                                    final productPrice = double.parse(productPrice);
+                            Center(
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  final globalCart = Provider.of<GlobalCartProvider>(context, listen: false);
+                                  final productPrice = double.parse(productPrice1);
 
-                                    // Check if product already exists for this user
-                                    QuerySnapshot existing = await FirebaseFirestore.instance
+                                  QuerySnapshot existing = await FirebaseFirestore.instance
+                                      .collection('AddtoCartData')
+                                      .where('userID', isEqualTo: user_id)
+                                      .where('pid', isEqualTo: data_id)
+                                      .get();
+
+                                  if (existing.docs.isNotEmpty) {
+                                    DocumentSnapshot doc = existing.docs.first;
+                                    int currentCount = doc['count'];
+                                    double currentTotal = double.parse(doc['total_price'].toString());
+
+                                    await FirebaseFirestore.instance
                                         .collection('AddtoCartData')
-                                        .where('userID', isEqualTo: user_id)
-                                        .where('pid', isEqualTo: )
-                                        .get();
+                                        .doc(doc.id)
+                                        .update({
+                                      'count': currentCount + 1,
+                                      'total_price': currentTotal + productPrice,
+                                    });
 
-                                    if (existing.docs.isNotEmpty) {
-                                      // Update quantity and total price
-                                      DocumentSnapshot doc = existing.docs.first;
-                                      int currentCount = doc['count'];
-                                      double currentTotal = double.parse(doc['total_price'].toString());
+                                    globalCart.increaseCount(productPrice);
 
-                                      await FirebaseFirestore.instance
-                                          .collection('AddtoCartData')
-                                          .doc(doc.id)
-                                          .update({
-                                        'count': currentCount + 1,
-                                        'total_price': currentTotal + productPrice,
-                                      });
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Item quantity updated in cart.'),
+                                        backgroundColor: Colors.black,
+                                      ),
+                                    );
+                                  } else {
+                                    await FirebaseFirestore.instance.collection('AddtoCartData').add({
+                                      'pid': data_id,
+                                      'userID': user_id,
+                                      'count': 1,
+                                      'total_price': productPrice,
+                                      'productName': productName,
+                                      'productPrice': productPrice1,
+                                      'productImage': productImage,
+                                    });
 
-                                      globalCart.increaseCount(productPrice);
+                                    globalCart.increaseCount(productPrice);
 
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: Text('Item quantity updated in cart.'),
-                                          backgroundColor: Colors.blue[600],
-                                        ),
-                                      );
-                                    } else {
-                                      // Add new item to cart
-                                      Map<String, dynamic> data = {
-                                        'pid': widget.pid,
-                                        'userID': user_id,
-                                        'count': 1,
-                                        'total_price': productPrice,
-                                        'productName': widget.productName1,
-                                        'productPrice': widget.productPrice1,
-                                        'productImage': widget.,
-                                      };
-
-                                      await FirebaseFirestore.instance.collection('AddtoCartData').add(data);
-                                      globalCart.increaseCount(productPrice);
-
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: Text('Item successfully added to cart!'),
-                                          backgroundColor: Colors.green[600],
-                                        ),
-                                      );
-                                    }
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Item successfully added to cart!'),
+                                        backgroundColor: Colors.green[600],
+                                      ),
+                                    );
                                   }
                                 },
-                                child: Text('Add To Cart'))
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.black
+                                ),
+                                child: const Text('Add To Cart',style: TextStyle(color: Colors.white),),
+                              ),
+                            ),
                           ],
                         ),
                       ),
