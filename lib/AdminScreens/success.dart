@@ -30,9 +30,9 @@ class _SuccessfulScreenState extends State<SuccessfulScreen> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.black,
         title: Text(
-          "Successfull Screen",
+          "ThankYou Screen",
           style: TextStyle(color: Colors.white, fontSize: 29),
         ),
         centerTitle: true,

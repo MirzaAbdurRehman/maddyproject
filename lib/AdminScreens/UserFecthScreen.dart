@@ -1,11 +1,8 @@
-import 'dart:io';
-import 'dart:math';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:clothing/AdminScreens/product_Detail.dart';
-import 'package:clothing/AdminScreens/updateData.dart';
 import 'package:clothing/AdminScreens/update_profile.dart';
+import 'package:clothing/AdminScreens/user_OrderHistory.dart';
 import 'package:clothing/Screens/Reset.dart';
 import 'package:clothing/Screens/login.dart';
 import 'package:clothing/Services/whatsapp_service.dart';
@@ -17,12 +14,9 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
-
 import '../AddToCartScreen/AddCartData.dart';
 import '../Screens/faqs.dart';
 import '../Screens/own_services.dart';
-import '../cartProviderModel/cartQuantity.dart';
 
 class UserFetchScreen extends StatefulWidget {
   const UserFetchScreen({super.key});
@@ -173,6 +167,14 @@ class _UserFetchScreenState extends State<UserFetchScreen>
                           title: Text('Forget Password', style: TextStyle(color: Colors.white)),
                           onTap: () {
                             Navigator.push(context, MaterialPageRoute(builder: (context) =>  ResetScreen()));
+                          },
+                        ),
+
+                        ListTile(
+                          leading: Icon(Icons.shopping_bag, color: Colors.blue),
+                          title: Text('Orders', style: TextStyle(color: Colors.white)),
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) =>  User_OrderHistory()));
                           },
                         ),
 

@@ -15,6 +15,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../Screens/own_services.dart';
+import 'Admin_OrderHistory.dart';
+import 'ReviewsScreen.dart';
 
 class ClothingFetchScreen extends StatefulWidget {
   const ClothingFetchScreen({super.key});
@@ -85,7 +87,83 @@ class _ClothingFetchScreenState extends State<ClothingFetchScreen>
 
     return Scaffold(
 
-      backgroundColor: Colors.grey[100],
+      drawer: Drawer(
+        child: Container(
+          color: Colors.black,
+          child: Column(
+            children: [
+              SizedBox(height: 60),
+              Text(
+                'Admin',
+                style: TextStyle(color: Colors.white,fontSize: 39),
+              ),
+              SizedBox(height: 30),
+
+
+              ListTile(
+                leading: Icon(Icons.receipt_long_outlined, color: Colors.green),
+                title: Text(
+                  'Product Reviews',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ReviewScreen()),
+                  );
+                },
+              ),
+
+
+              ListTile(
+                leading: Icon(Icons.shopping_bag, color: Colors.blue),
+                title: Text(
+                  'Orders Summary',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Admin_OrderHistory()),
+                  );
+                },
+              ),
+
+
+              Container(
+                height: 32,
+                margin: EdgeInsets.symmetric(horizontal: 36, vertical: 20),
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    FirebaseAuth.instance.signOut();
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginScreen()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red[500],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: Text(
+                    "Logout",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontFamily: 'Metropolis',
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
 
         iconTheme: IconThemeData(color: Colors.white),
@@ -172,7 +250,9 @@ class _ClothingFetchScreenState extends State<ClothingFetchScreen>
           // 🔽 Compact Sorting Dropdown
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 4),
-            child: Row(
+            child:
+
+            Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Flexible(

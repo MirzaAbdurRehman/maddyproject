@@ -32,6 +32,15 @@ class GlobalCartProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void clearCart() async {
+    _totalCount = 0;
+    _totalPrice = 0.0;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('cart_count');
+    await prefs.remove('cart_price');
+    notifyListeners();
+  }
+
   void increaseCount(double price) {
     _totalCount++;
     _totalPrice += price;

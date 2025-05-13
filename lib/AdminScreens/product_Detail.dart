@@ -184,20 +184,52 @@ class _CategoriesDetailedPageState extends State<CategoriesDetailedPage> {
                       fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey[700]),
                 ),
                 SizedBox(height: 8),
-                TextFormField(
-                  controller: reviewController,
-                  maxLines: 1,
-                  decoration: InputDecoration(
-                    hintText: "Write your review...",
-                    filled: true,
-                    fillColor: Colors.grey[100],
-                    prefixIcon: Icon(Icons.reviews_outlined),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
+
+
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: reviewController,
+                        maxLines: 1,
+                        decoration: InputDecoration(
+                          hintText: "Write your review...",
+                          filled: true,
+                          fillColor: Colors.grey[100],
+                          prefixIcon: Icon(Icons.reviews_outlined),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                    SizedBox(width: 8), // spacing between field and button
+                    ElevatedButton(
+                      onPressed: () {
+
+                        String review = reviewController.text.trim();
+                        if (review.isNotEmpty) {
+                          print("Review Submitted: $review");
+                          ReviewsAdd();
+                          reviewController.clear(); // Optional: clear the field after submit
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(
+                        "Submit",
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
+                  ],
                 ),
+
                 SizedBox(height: 20),
                 SizedBox(
                   width: double.infinity,
@@ -206,7 +238,7 @@ class _CategoriesDetailedPageState extends State<CategoriesDetailedPage> {
                     onPressed: () {
                       setState(() {
                         isLoading = true;
-                        ReviewsAdd();
+
                         AddtoCart();
                         isLoading = false;
                       });

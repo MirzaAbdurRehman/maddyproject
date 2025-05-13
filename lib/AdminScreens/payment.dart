@@ -1,6 +1,9 @@
 import 'package:clothing/AdminScreens/success.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../cartProviderModel/GlobalCart.dart';
 
 class CartItem {
   final String pid;
@@ -36,21 +39,59 @@ class CheckOut extends StatelessWidget {
   const CheckOut({Key? key, required this.userId, required this.cartItems})
       : super(key: key);
 
+  // void submitOrder(BuildContext context) async {
+  //   final collection = FirebaseFirestore.instance.collection('AddOrderData');
+  //   for (var item in cartItems) {
+  //     await collection.add(item.toMap(userId));
+  //   }
+  //
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     const SnackBar(content: Text('Order submitted successfully')),
+  //   );
+  //
+  //   Navigator.pushReplacement(
+  //     context,
+  //     MaterialPageRoute(builder: (context) => SuccessfulScreen()),
+  //   );
+  // }
+
+
   void submitOrder(BuildContext context) async {
-    final collection = FirebaseFirestore.instance.collection('AddOrderData');
-    for (var item in cartItems) {
-      await collection.add(item.toMap(userId));
+    final orderCollection = FirebaseFirestore.instance.collection('AddOrderData');
+    final cartCollection = FirebaseFirestore.instance.collection('AddtoCartData');
+
+    try {
+      // Add order to 'AddOrderData'
+      for (var item in cartItems) {
+        await orderCollection.add(item.toMap(userId));
+      }
+
+      // Delete all user's cart items from 'AddtoCartData'
+      final cartDocs = await cartCollection.where('userID', isEqualTo: userId).get();
+      for (var doc in cartDocs.docs) {
+        await doc.reference.delete();
+      }
+
+      // 🎯 Clear local cart state using GlobalCartProvider
+      final globalCartProvider = Provider.of<GlobalCartProvider>(context, listen: false);
+      globalCartProvider.clearCart();
+
+      // 🟢 Success
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Order submitted successfully')),
+      );
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => SuccessfulScreen()),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
     }
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Order submitted successfully')),
-    );
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => SuccessfulScreen()),
-    );
   }
+
 
   int calculateTotalPrice() {
     return cartItems.fold(0, (sum, item) => sum + item.price);
