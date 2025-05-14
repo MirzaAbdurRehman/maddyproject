@@ -1,14 +1,12 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:clothing/AdminScreens/createData.dart';
-import 'package:clothing/Screens/Reset.dart';
-import 'package:clothing/Screens/login.dart';
-import 'package:clothing/Screens/own_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'UserScreens/AuthenticationScreen/login.dart';
+import 'UserScreens/Service/own_services.dart';
 
 
 class home extends StatefulWidget {

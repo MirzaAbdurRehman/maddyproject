@@ -1,12 +1,10 @@
 import 'dart:async';
-
-import 'package:clothing/AdminScreens/Fetch_Data_Screen.dart';
-import 'package:clothing/AdminScreens/UserFecthScreen.dart';
-import 'package:clothing/Screens/login.dart';
-import 'package:clothing/home.dart';
+import 'package:clothing/UserScreens/UserFecthScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'login.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

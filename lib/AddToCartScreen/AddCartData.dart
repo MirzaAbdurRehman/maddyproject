@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../AdminScreens/payment.dart';
+import '../UserScreens/payment.dart';
 import '../cartProviderModel/GlobalCart.dart';
 import '../cartProviderModel/cartQuantity.dart';
 

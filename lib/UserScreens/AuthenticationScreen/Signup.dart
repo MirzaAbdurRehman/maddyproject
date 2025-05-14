@@ -1,7 +1,6 @@
 // SignupScreen.dart
 import 'dart:typed_data';
 import 'dart:io';
-import 'package:clothing/Screens/login.dart';
 import 'package:clothing/Widgets/custom.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +9,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:uuid/uuid.dart';
+
+import 'login.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);

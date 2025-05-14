@@ -1,20 +1,15 @@
-import 'package:cached_network_image/cached_network_image.dart';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:clothing/AdminScreens/createData.dart';
-import 'package:clothing/AdminScreens/product_Detail.dart';
+import 'package:clothing/UserScreens/product_Detail.dart';
 import 'package:clothing/AdminScreens/updateData.dart';
-import 'package:clothing/AdminScreens/update_profile.dart';
-import 'package:clothing/Screens/login.dart';
-import 'package:clothing/Services/whatsapp_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
-
-import '../Screens/own_services.dart';
+import '../UserScreens/AuthenticationScreen/login.dart';
+import '../UserScreens/Service/own_services.dart';
 import 'Admin_OrderHistory.dart';
 import 'ReviewsScreen.dart';
 

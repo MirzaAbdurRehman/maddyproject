@@ -1,12 +1,10 @@
 import 'package:achievement_view/achievement_view.dart';
-import 'package:clothing/AdminScreens/UserFecthScreen.dart';
-import 'package:clothing/Screens/Signup.dart';
+import 'package:clothing/UserScreens/UserFecthScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../AdminScreens/Fetch_Data_Screen.dart';
-import '../AdminScreens/createData.dart';
+import '../../AdminScreens/Fetch_Data_Screen.dart';
+import 'Signup.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
