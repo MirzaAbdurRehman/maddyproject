@@ -513,167 +513,191 @@ class _UserFetchScreenState extends State<UserFetchScreen>
                   mainAxisSpacing: 12,
                   childAspectRatio: screenWidth / (MediaQuery.of(context).size.height * 0.75),
                 ),
-                itemBuilder: (context, index) {
-                  // ✅ Define all variables locally inside itemBuilder
-                  final doc = products[index];
-                  final String productName = doc['productName'];
-                  final String productPrice1 = doc['productPrice'];
-                  final String productInfo = doc['productInfo'];
-                  final String productDescription = doc['productDescription'];
-                  final String productImage = doc['image'];
-                  final String data_id = doc.id;
+                  itemBuilder: (context, index) {
+                    final doc = products[index];
+                    final String productName = doc['productName'];
+                    final String productPrice1 = doc['productPrice'];
+                    final String productInfo = doc['productInfo'];
+                    final String productDescription = doc['productDescription'];
+                    final String productImage = doc['image'];
+                    final String data_id = doc.id;
 
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CategoriesDetailedPage(
-                            pid: data_id,
-                            productName1: productName,
-                            productPrice1: productPrice1,
-                            productImage1: productImage,
-                            productInfo1: productInfo,
-                            productDescription1: productDescription,
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CategoriesDetailedPage(
+                              pid: data_id,
+                              productName1: productName,
+                              productPrice1: productPrice1,
+                              productImage1: productImage,
+                              productInfo1: productInfo,
+                              productDescription1: productDescription,
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                    child: Card(
-                      color: Colors.white,
+                        );
+                      },
+                      child: Stack(
+                        children: [
+                          Card(
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            elevation: 0,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Image.network(
+                                      productImage,
+                                      height: screenWidth > 600 ? 160 : 120,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (context, error, stackTrace) =>
+                                      const Icon(Icons.broken_image, size: 50),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    productName,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: screenWidth > 600 ? 18 : 16,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Rs: $productPrice1',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(color: Colors.redAccent),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Info: $productInfo',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(fontSize: screenWidth > 600 ? 14 : 12),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Description: $productDescription',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(fontSize: screenWidth > 600 ? 14 : 12),
+                                  ),
+                                  RatingBar.builder(
+                                    initialRating: 3,
+                                    itemSize: 20,
+                                    minRating: 1,
+                                    direction: Axis.horizontal,
+                                    allowHalfRating: true,
+                                    itemCount: 5,
+                                    itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                    itemBuilder: (context, _) => const Icon(
+                                      Icons.star,
+                                      color: Colors.amber,
+                                    ),
+                                    onRatingUpdate: (rating) {
+                                      print('Rating: $rating');
+                                    },
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Center(
+                                    child: ElevatedButton(
+                                      onPressed: () async {
+                                        final globalCart = Provider.of<GlobalCartProvider>(context, listen: false);
+                                        final productPrice = double.parse(productPrice1);
 
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      elevation: 0,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.network(
-                                productImage,
-                                height: screenWidth > 600 ? 160 : 120,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                const Icon(Icons.broken_image, size: 50),
+                                        QuerySnapshot existing = await FirebaseFirestore.instance
+                                            .collection('AddtoCartData')
+                                            .where('userID', isEqualTo: user_id)
+                                            .where('pid', isEqualTo: data_id)
+                                            .get();
+
+                                        if (existing.docs.isNotEmpty) {
+                                          DocumentSnapshot doc = existing.docs.first;
+                                          int currentCount = doc['count'];
+                                          double currentTotal = double.parse(doc['total_price'].toString());
+
+                                          await FirebaseFirestore.instance
+                                              .collection('AddtoCartData')
+                                              .doc(doc.id)
+                                              .update({
+                                            'count': currentCount + 1,
+                                            'total_price': currentTotal + productPrice,
+                                          });
+
+                                          globalCart.increaseCount(productPrice);
+
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text('Item quantity updated in cart.'),
+                                              backgroundColor: Colors.black,
+                                            ),
+                                          );
+                                        } else {
+                                          await FirebaseFirestore.instance.collection('AddtoCartData').add({
+                                            'pid': data_id,
+                                            'userID': user_id,
+                                            'count': 1,
+                                            'total_price': productPrice,
+                                            'productName': productName,
+                                            'productPrice': productPrice1,
+                                            'productImage': productImage,
+                                          });
+
+                                          globalCart.increaseCount(productPrice);
+
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text('Item successfully added to cart!'),
+                                              backgroundColor: Colors.green[600],
+                                            ),
+                                          );
+                                        }
+                                      },
+                                      style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
+                                      child: const Text('Add To Cart', style: TextStyle(color: Colors.white)),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            const SizedBox(height: 8),
-                            Text(
-                              productName,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: screenWidth > 600 ? 18 : 16,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Rs: $productPrice1',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(color: Colors.redAccent),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Info: $productInfo',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontSize: screenWidth > 600 ? 14 : 12),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Description: $productDescription',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontSize: screenWidth > 600 ? 14 : 12),
-                            ),
-                            RatingBar.builder(
-                              initialRating: 3,
-                              itemSize: 20,
-                              minRating: 1,
-                              direction: Axis.horizontal,
-                              allowHalfRating: true,
-                              itemCount: 5,
-                              itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
-                              itemBuilder: (context, _) => const Icon(
-                                Icons.star,
-                                color: Colors.amber,
-                              ),
-                              onRatingUpdate: (rating) {
-                                print('Rating: $rating');
+                          ),
+
+                          Positioned(
+                            top: 6,
+                            right: 6,
+                            child: FutureBuilder<QuerySnapshot>(
+                              future: FirebaseFirestore.instance
+                                  .collection('AddtoCartData')
+                                  .where('userID', isEqualTo: user_id)
+                                  .where('pid', isEqualTo: data_id)
+                                  .get(),
+                              builder: (context, snapshot) {
+                                bool isInCart = snapshot.hasData && snapshot.data!.docs.isNotEmpty;
+
+                                return CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  child: Icon(
+                                    isInCart ? Icons.favorite : Icons.favorite_border,
+                                    color: isInCart ? Colors.pink : Colors.grey,
+                                  ),
+                                );
                               },
                             ),
-                            const SizedBox(height: 8),
-                            Center(
-                              child: ElevatedButton(
-                                onPressed: () async {
-                                  final globalCart = Provider.of<GlobalCartProvider>(context, listen: false);
-                                  final productPrice = double.parse(productPrice1);
-
-                                  QuerySnapshot existing = await FirebaseFirestore.instance
-                                      .collection('AddtoCartData')
-                                      .where('userID', isEqualTo: user_id)
-                                      .where('pid', isEqualTo: data_id)
-                                      .get();
-
-                                  if (existing.docs.isNotEmpty) {
-                                    DocumentSnapshot doc = existing.docs.first;
-                                    int currentCount = doc['count'];
-                                    double currentTotal = double.parse(doc['total_price'].toString());
-
-                                    await FirebaseFirestore.instance
-                                        .collection('AddtoCartData')
-                                        .doc(doc.id)
-                                        .update({
-                                      'count': currentCount + 1,
-                                      'total_price': currentTotal + productPrice,
-                                    });
-
-                                    globalCart.increaseCount(productPrice);
-
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('Item quantity updated in cart.'),
-                                        backgroundColor: Colors.black,
-                                      ),
-                                    );
-                                  } else {
-                                    await FirebaseFirestore.instance.collection('AddtoCartData').add({
-                                      'pid': data_id,
-                                      'userID': user_id,
-                                      'count': 1,
-                                      'total_price': productPrice,
-                                      'productName': productName,
-                                      'productPrice': productPrice1,
-                                      'productImage': productImage,
-                                    });
-
-                                    globalCart.increaseCount(productPrice);
-
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('Item successfully added to cart!'),
-                                        backgroundColor: Colors.green[600],
-                                      ),
-                                    );
-                                  }
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.black
-                                ),
-                                child: const Text('Add To Cart',style: TextStyle(color: Colors.white),),
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+
               );
             },
           ),
