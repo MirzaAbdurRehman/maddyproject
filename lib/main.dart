@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'UserScreens/AuthenticationScreen/Splash.dart';
+import 'cartProviderModel/FavoriteProvider.dart';
 import 'cartProviderModel/GlobalCart.dart';
 
 void main() async {
@@ -24,6 +25,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => GlobalCartProvider()),
+        ChangeNotifierProvider(create: (_) => FavoriteProvider()), // no userId passed here
       ],
       child: const MyApp(),
     ),

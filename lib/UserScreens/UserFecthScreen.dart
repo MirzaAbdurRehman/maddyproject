@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:clothing/UserScreens/product_Detail.dart';
 import 'package:clothing/UserScreens/update_profile.dart';
 import 'package:clothing/UserScreens/user_OrderHistory.dart';
+import 'package:clothing/cartProviderModel/FavoriteProvider.dart';
 import 'package:clothing/cartProviderModel/GlobalCart.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -123,17 +124,6 @@ class _UserFetchScreenState extends State<UserFetchScreen>
 
                     return Column(
                       children: [
-                        // Container(
-                        //   width: double.infinity,
-                        //   height: 80,
-                        //   child: const DrawerHeader(
-                        //     decoration: BoxDecoration(color: Colors.black),
-                        //     child: Text(
-                        //       ' Profile',
-                        //       style: TextStyle(color: Colors.white, fontSize: 30),
-                        //     ),
-                        //   ),
-                        // ),
                         SizedBox(height: 30),
                         ClipOval(
                           child: CachedNetworkImage(
@@ -674,25 +664,51 @@ class _UserFetchScreenState extends State<UserFetchScreen>
                           Positioned(
                             top: 6,
                             right: 6,
-                            child: FutureBuilder<QuerySnapshot>(
-                              future: FirebaseFirestore.instance
-                                  .collection('AddtoCartData')
-                                  .where('userID', isEqualTo: user_id)
-                                  .where('pid', isEqualTo: data_id)
-                                  .get(),
-                              builder: (context, snapshot) {
-                                bool isInCart = snapshot.hasData && snapshot.data!.docs.isNotEmpty;
+                            child: Consumer<FavoriteProvider>(
+                              builder: (context, favoriteProvider, child) {
+                                final bool isInFavorites = favoriteProvider.isFavorite(data_id);
 
-                                return CircleAvatar(
-                                  backgroundColor: Colors.white,
-                                  child: Icon(
-                                    isInCart ? Icons.favorite : Icons.favorite_border,
-                                    color: isInCart ? Colors.pink : Colors.grey,
+                                return InkWell(
+                                  onTap: () async {
+                                    try {
+                                      await favoriteProvider.toggleFavorite(
+                                        pid: data_id,
+                                        productName: productName,
+                                        productImage: productImage,
+                                        productPrice1: productPrice1,
+                                      );
+
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            isInFavorites
+                                                ? 'Removed from favorites & cart'
+                                                : 'Added to favorites & cart',
+                                          ),
+                                          backgroundColor: isInFavorites ? Colors.red : Colors.green,
+                                        ),
+                                      );
+                                    } catch (e) {
+                                      print("❌ Error: $e");
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+                                      );
+                                    }
+                                  },
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: CircleAvatar(
+                                    backgroundColor: Colors.white,
+                                    child: Icon(
+                                      isInFavorites ? Icons.favorite : Icons.favorite_border,
+                                      color: isInFavorites ? Colors.redAccent : Colors.grey,
+                                    ),
                                   ),
                                 );
                               },
                             ),
                           ),
+
+
                         ],
                       ),
                     );
