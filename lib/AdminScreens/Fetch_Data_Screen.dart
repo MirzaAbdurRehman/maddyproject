@@ -61,13 +61,13 @@ class _ClothingFetchScreenState extends State<ClothingFetchScreen>
   ];
 
   final List<String> images = [
-    'https://images.pexels.com/photos/70497/pexels-photo-70497.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    'https://images.pexels.com/photos/936611/pexels-photo-936611.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    'https://images.pexels.com/photos/1410235/pexels-photo-1410235.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    'https://images.pexels.com/photos/936611/pexels-photo-936611.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    'https://images.pexels.com/photos/936611/pexels-photo-936611.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'
+    'https://images.unsplash.com/photo-1634316656469-03591fb7ef0d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    'https://images.unsplash.com/photo-1711347550274-af4b79339ff0?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    'https://plus.unsplash.com/premium_photo-1712848344597-27b66945f09d?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjQxfHxzbWFydCUyMHdhdGNoZXMlMjBjb3ZlcnxlbnwwfHwwfHx8MA%3D%3D',
+    'https://images.unsplash.com/photo-1620838106329-38480e765006?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjM5fHxzbWFydCUyMHdhdGNoZXMlMjBjb3ZlcnxlbnwwfHwwfHx8MA%3D%3D',
+    'https://images.unsplash.com/photo-1605988177962-af1321011f4d?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    'https://images.unsplash.com/photo-1704783327986-9dfcbfe543bd?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NzZ8fHNtYXJ0JTIwd2F0Y2hlcyUyMGNvdmVyfGVufDB8fDB8fHww'
   ];
-
 
 
   @override
@@ -183,9 +183,9 @@ class _ClothingFetchScreenState extends State<ClothingFetchScreen>
           indicatorColor: Colors.orange,
           controller: _tabController,
           tabs: const [
-            Tab(text: 'Clothing Products'),
-            Tab(text: 'Electronics Products'),
-            Tab(text: 'Shoes Products'),
+            Tab(text: 'Rolex'),
+            Tab(text: 'Rado'),
+            Tab(text: 'Patek Philippe'),
           ],
         ),
       ),
@@ -378,130 +378,113 @@ class _ClothingFetchScreenState extends State<ClothingFetchScreen>
                   var productImage = doc['image'];
                   var data_id = doc.id;
 
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CategoriesDetailedPage(
-                            pid: data_id,
-                            productName1: productName,
-                            productPrice1: productPrice,
-                            productImage1: productImage,
-                            productInfo1: productInfo,
-                            productDescription1: productDescription,
+                  return Card(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    elevation: 0,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.network(
+                              productImage,
+                              height: screenWidth > 600 ? 160 : 120,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                              const Icon(Icons.broken_image, size: 50),
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                    child: Card(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      elevation: 0,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.network(
-                                productImage,
-                                height: screenWidth > 600 ? 160 : 120,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                const Icon(Icons.broken_image, size: 50),
-                              ),
+                          const SizedBox(height: 8),
+                          Text(
+                            productName,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: screenWidth > 600 ? 18 : 16,
                             ),
-                            const SizedBox(height: 8),
-                            Text(
-                              productName,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: screenWidth > 600 ? 18 : 16,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Rs: $productPrice',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(color: Colors.redAccent),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Info: $productInfo',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(fontSize: screenWidth > 600 ? 14 : 12),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Description: $productDescription',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(fontSize: screenWidth > 600 ? 14 : 12),
+                          ),
+                          RatingBar.builder(
+                            initialRating: 3,
+                            itemSize: 20,
+                            minRating: 1,
+                            direction: Axis.horizontal,
+                            allowHalfRating: true,
+                            itemCount: 5,
+                            itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                            itemBuilder: (context, _) => const Icon(
+                              Icons.star,
+                              color: Colors.amber,
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Rs: $productPrice',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(color: Colors.redAccent),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Info: $productInfo',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontSize: screenWidth > 600 ? 14 : 12),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Description: $productDescription',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontSize: screenWidth > 600 ? 14 : 12),
-                            ),
-                            RatingBar.builder(
-                              initialRating: 3,
-                              itemSize: 20,
-                              minRating: 1,
-                              direction: Axis.horizontal,
-                              allowHalfRating: true,
-                              itemCount: 5,
-                              itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
-                              itemBuilder: (context, _) => const Icon(
-                                Icons.star,
-                                color: Colors.amber,
-                              ),
-                              onRatingUpdate: (rating) {
-                                print('Rating: $rating');
-                              },
-                            ),
-                            const SizedBox(height: 8),
-                            Align(
-                              alignment: Alignment.bottomRight,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  IconButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => UpdateClothing(
-                                            productName1: productName,
-                                            productPrice1: productPrice,
-                                            productInfo1: productInfo,
-                                            productDescription1: productDescription,
-                                            img1: productImage,
-                                            id1: data_id,
-                                            collectionName: collectionName,
-                                          ),
+                            onRatingUpdate: (rating) {
+                              print('Rating: $rating');
+                            },
+                          ),
+                          const SizedBox(height: 8),
+                          Align(
+                            alignment: Alignment.bottomRight,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => UpdateClothing(
+                                          productName1: productName,
+                                          productPrice1: productPrice,
+                                          productInfo1: productInfo,
+                                          productDescription1: productDescription,
+                                          img1: productImage,
+                                          id1: data_id,
+                                          collectionName: collectionName,
                                         ),
-                                      );
-                                    },
-                                    icon: const Icon(Icons.edit, color: Colors.blue, size: 20),
-                                  ),
-                                  IconButton(
-                                    onPressed: () {
-                                      FirebaseFirestore.instance
-                                          .collection(collectionName)
-                                          .doc(data_id)
-                                          .delete();
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(content: Text("Deleted Successfully")),
-                                      );
-                                    },
-                                    icon: const Icon(Icons.delete, color: Colors.red, size: 20),
-                                  ),
-                                ],
-                              ),
+                                      ),
+                                    );
+                                  },
+                                  icon: const Icon(Icons.edit, color: Colors.blue, size: 20),
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    FirebaseFirestore.instance
+                                        .collection(collectionName)
+                                        .doc(data_id)
+                                        .delete();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text("Deleted Successfully")),
+                                    );
+                                  },
+                                  icon: const Icon(Icons.delete, color: Colors.red, size: 20),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   );

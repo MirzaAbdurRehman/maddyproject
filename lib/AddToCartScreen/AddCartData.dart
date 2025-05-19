@@ -236,7 +236,7 @@ class CartItemCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    'Price: ₹${cartItem.totalPrice}',
+                    'Price: ${cartItem.totalPrice} Rs.',
                     style: const TextStyle(
                       fontSize: 14,
                       color: Colors.deepOrange,

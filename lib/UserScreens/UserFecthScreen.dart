@@ -67,11 +67,12 @@ class _UserFetchScreenState extends State<UserFetchScreen>
   ];
 
   final List<String> images = [
-    'https://images.pexels.com/photos/70497/pexels-photo-70497.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    'https://images.pexels.com/photos/936611/pexels-photo-936611.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    'https://images.pexels.com/photos/1410235/pexels-photo-1410235.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    'https://images.pexels.com/photos/936611/pexels-photo-936611.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    'https://images.pexels.com/photos/936611/pexels-photo-936611.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'
+    'https://images.unsplash.com/photo-1634316656469-03591fb7ef0d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    'https://images.unsplash.com/photo-1711347550274-af4b79339ff0?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    'https://plus.unsplash.com/premium_photo-1712848344597-27b66945f09d?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjQxfHxzbWFydCUyMHdhdGNoZXMlMjBjb3ZlcnxlbnwwfHwwfHx8MA%3D%3D',
+    'https://images.unsplash.com/photo-1620838106329-38480e765006?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjM5fHxzbWFydCUyMHdhdGNoZXMlMjBjb3ZlcnxlbnwwfHwwfHx8MA%3D%3D',
+    'https://images.unsplash.com/photo-1605988177962-af1321011f4d?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    'https://images.unsplash.com/photo-1704783327986-9dfcbfe543bd?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NzZ8fHNtYXJ0JTIwd2F0Y2hlcyUyMGNvdmVyfGVufDB8fDB8fHww'
   ];
 
 
@@ -143,7 +144,7 @@ class _UserFetchScreenState extends State<UserFetchScreen>
                             Navigator.pop(context);
                           },
                         ),
-                        SizedBox(height: 20),
+                        // SizedBox(height: 20),
                         ListTile(
                           leading: Icon(Icons.delivery_dining_outlined, color: Colors.red[500]),
                           title: Text(Address, style: TextStyle(color: Colors.white)),
@@ -175,8 +176,6 @@ class _UserFetchScreenState extends State<UserFetchScreen>
                             Navigator.push(context, MaterialPageRoute(builder: (context) =>  FaqsScreen()));
                           },
                         ),
-
-                        SizedBox(height: 20),
                         ListTile(
                           leading: Icon(Icons.phone, color: Colors.green),
                           title: Text(Phone, style: TextStyle(color: Colors.white)),
@@ -252,7 +251,7 @@ class _UserFetchScreenState extends State<UserFetchScreen>
 
 
         iconTheme: IconThemeData(color: Colors.white),
-        title: const Text('Home', style: TextStyle(color: Colors.white)),
+        title: const Text('Watch Hub', style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold)),
         centerTitle: true,
         backgroundColor: Colors.black,
         actions: [
@@ -319,9 +318,9 @@ class _UserFetchScreenState extends State<UserFetchScreen>
           indicatorColor: Colors.orange,
           controller: _tabController,
           tabs: const [
-            Tab(text: 'Clothing Products'),
-            Tab(text: 'Electronics Products'),
-            Tab(text: 'Shoes Products'),
+            Tab(text: 'Rolex'),
+            Tab(text: 'Rado'),
+            Tab(text: 'Patek Philippe'),
           ],
         ),
       ),

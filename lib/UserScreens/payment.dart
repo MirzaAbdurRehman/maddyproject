@@ -150,7 +150,7 @@ class CheckOut extends StatelessWidget {
                               color: Colors.white, fontWeight: FontWeight.w500)),
                       subtitle: Text('Qty: ${item.quantity}',
                           style: const TextStyle(color: Colors.white70)),
-                      trailing: Text('₹${item.price}',
+                      trailing: Text('${item.price} Rs.',
                           style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold)),
@@ -177,11 +177,11 @@ class CheckOut extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
               child: Column(
                 children: [
-                  _summaryRow(Icons.shopping_bag_outlined, 'Order', '₹$orderTotal'),
+                  _summaryRow(Icons.shopping_bag_outlined, 'Order', '$orderTotal Rs.'),
                   const Divider(),
-                  _summaryRow(Icons.local_shipping_outlined, 'Delivery', '₹$deliveryFee'),
+                  _summaryRow(Icons.local_shipping_outlined, 'Delivery', '$deliveryFee Rs.'),
                   const Divider(),
-                  _summaryRow(Icons.attach_money, 'Total', '₹$grandTotal',
+                  _summaryRow(Icons.attach_money, 'Total', '$grandTotal Rs.',
                       isTotal: true),
                 ],
               ),

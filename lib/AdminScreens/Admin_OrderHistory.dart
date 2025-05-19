@@ -117,7 +117,7 @@ class _Admin_OrderHistoryState extends State<Admin_OrderHistory> {
                                 maxLines: 1,
                               ),
                               SizedBox(height: 6),
-                              Text("Total Price: ₹$totalPrice", style: TextStyle(color: Colors.red)),
+                              Text("Total Price: $totalPrice Rs.", style: TextStyle(color: Colors.red)),
                               Text("Quantity: $quantity"),
                               Text("User Email: $userId", style: TextStyle(color: Colors.blue)),
                               SizedBox(height: 10),

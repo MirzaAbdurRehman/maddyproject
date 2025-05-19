@@ -28,13 +28,23 @@ class _creaDataAdminState extends State<creaDataAdmin> {
   Uint8List? webImg;
   bool isLoading = false;
 
-  // 🔽 Dropdown related variables
+  // // 🔽 Dropdown related variables
+  // String selectedCollection = 'ClothingData';
+  // List<String> collectionOptions = [
+  //   'ClothingData',
+  //   'ElectronicsData',
+  //   'ShoesData',
+  // ];
+
+
+  // 🔽 Dropdown alias map
+  Map<String, String> collectionOptions = {
+    'ClothingData': 'Rolex Watch',
+    'ElectronicsData': 'Rado Watch',
+    'ShoesData': 'Patek Philippe Watch',
+  };
+
   String selectedCollection = 'ClothingData';
-  List<String> collectionOptions = [
-    'ClothingData',
-    'ElectronicsData',
-    'ShoesData',
-  ];
 
   Future<void> productImage() async {
     if (!_formKey.currentState!.validate()) return;
@@ -151,6 +161,7 @@ class _creaDataAdminState extends State<creaDataAdmin> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.white),
         title: Text('Add Product', style: TextStyle(color: Colors.white)),
         centerTitle: true,
         backgroundColor: Colors.black,
@@ -205,6 +216,7 @@ class _creaDataAdminState extends State<creaDataAdmin> {
               ),
               const SizedBox(height: 20),
               // 🔽 Dropdown
+              // 🔽 Updated Dropdown with alias
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 child: DropdownButtonFormField<String>(
@@ -213,10 +225,10 @@ class _creaDataAdminState extends State<creaDataAdmin> {
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(25.0)),
                   ),
                   value: selectedCollection,
-                  items: collectionOptions.map((String collection) {
+                  items: collectionOptions.entries.map((entry) {
                     return DropdownMenuItem<String>(
-                      value: collection,
-                      child: Text(collection),
+                      value: entry.key,
+                      child: Text(entry.value),
                     );
                   }).toList(),
                   onChanged: (String? newValue) {
@@ -226,6 +238,7 @@ class _creaDataAdminState extends State<creaDataAdmin> {
                   },
                 ),
               ),
+
               customTextField(
                 label: 'Product Name',
                 icon: Icons.label,

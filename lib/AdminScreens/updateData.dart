@@ -180,8 +180,9 @@ class _UpdateClothingState extends State<UpdateClothing> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Update Clothing', style: TextStyle(fontSize: 25)),
-        backgroundColor: Colors.blue,
+        iconTheme: IconThemeData(color: Colors.white),
+        title: Text('Update Product', style: TextStyle(color: Colors.white,fontSize: 25)),
+        backgroundColor: Colors.black,
         centerTitle: true,
       ),
       body: isLoading
@@ -231,21 +232,24 @@ class _UpdateClothingState extends State<UpdateClothing> {
                     controller: productDescriptionController,
                     label: 'Product Description'),
                 SizedBox(height: 25),
-                SizedBox(
-                  width: double.infinity,
-                  height: 55,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        updateImageAndData();
-                      }
-                    },
-                    child:
-                    Text('Update', style: TextStyle(fontSize: 20)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 55,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          updateImageAndData();
+                        }
+                      },
+                      child:
+                      Text('Update', style: TextStyle(color: Colors.white,fontSize: 20)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
                       ),
                     ),
                   ),
